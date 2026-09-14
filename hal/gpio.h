@@ -12,6 +12,12 @@ typedef enum
     GPIO_HIGH
 }GPIO_Status;
 
+typedef enum {
+    GPIO_BIAS_DISABLE   = 0,
+    GPIO_BIAS_PULL_UP   = 1,
+    GPIO_BIAS_PULL_DOWN = 2,
+} GPIO_BIAS;
+
 typedef enum
 {
     GPIO_DIR_OUTPUT = 0,
@@ -28,7 +34,7 @@ typedef struct
 
 }GPIO_t;
 
-int gpio_init(GPIO_t *gpio,unsigned int chip_num,unsigned int pin,GPIO_DIRECTION direction,const char *consumer);
+int gpio_init(GPIO_t *gpio,unsigned int chip_num,unsigned int pin,GPIO_BIAS bias,GPIO_DIRECTION direction,const char *consumer);
 int gpio_write(GPIO_t *gpio,GPIO_Status value);
 int gpio_read(GPIO_t *gpio);
 void gpio_deinit(GPIO_t *gpio);

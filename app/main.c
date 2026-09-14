@@ -2,8 +2,10 @@
 #include <signal.h>
 #include <unistd.h>
 #include "../device/led.h"
+#include "../device/button.h"
 
 #define LED_PIN 9
+#define BUTTON_PIN 17
 int running = 1;
 
 void signal_handler(int signal)
@@ -20,7 +22,8 @@ void signal_handler(int signal)
 int main()
 {
     LED_t led;
-    int status = 0;
+    BUTTON_t button;
+    // int status = 0;
     // register the signal handler
     signal(SIGINT, signal_handler);
     // LED init
@@ -29,15 +32,27 @@ int main()
         printf("LED init failed\n");
         return -1;
     }
+    // Button Init
+    if(button_init(&button,BUTTON_PIN) < 0)
+    {
+        printf("Button init failed\n");
+        return -1;
+    }
     while(running)
     {
-        // switch LED
-        led_toggle(&led);
-        // print the status
-        status = led_status_read(&led);
-        printf("LED status:%d\r\n",status);
-        // wait for 1 second
-        sleep(1);
+        BUTTON_Status btnstate = button_status_read(&button);
+        if ( btnstate == PRESSED)
+        {
+            led_on(&led);
+        }
+        else{
+            led_off(&led);
+        }
+        printf("Button: %s LED: %s\n",
+           btnstate == PRESSED ? "PRESSED" : "RELEASED",
+           led_status_read(&led) == ON ? "ON" : "OFF");
+        // wait for 100ms
+        usleep(100000);
     }
 
     // clear after end
@@ -45,6 +60,7 @@ int main()
     led_off(&led);
     // release the resource
     led_deinit(&led);
+    button_deinit(&button);
 
     return 0;
 }

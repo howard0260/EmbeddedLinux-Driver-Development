@@ -8,6 +8,7 @@ int led_init(LED_t *led,unsigned int pin)
     if(gpio_init(&led->gpio,
                   0,
                   pin,
+                  GPIO_BIAS_DISABLE,
                   GPIO_DIR_OUTPUT,
                   "led") != 0)
     {

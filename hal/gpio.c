@@ -4,7 +4,7 @@
 
 struct gpiod_chip_info *info;
 
-int gpio_init(GPIO_t *gpio,unsigned int chip_num,unsigned int pin,GPIO_DIRECTION direction,const char *consumer)
+int gpio_init(GPIO_t *gpio,unsigned int chip_num,unsigned int pin,GPIO_BIAS bias,GPIO_DIRECTION direction,const char *consumer)
 {
     char chip_path[32];
     snprintf(chip_path,sizeof(chip_path),"/dev/gpiochip%d",chip_num);
@@ -26,7 +26,7 @@ int gpio_init(GPIO_t *gpio,unsigned int chip_num,unsigned int pin,GPIO_DIRECTION
         gpiod_chip_close(gpio->chip);
         return -1;
     }
-    /// Step 3 setup the direction
+    /// Step 3 setup the direction  
     if (direction == GPIO_DIR_OUTPUT)
     {
         if(gpiod_line_settings_set_direction(settings,GPIOD_LINE_DIRECTION_OUTPUT) < 0 )
@@ -43,8 +43,7 @@ int gpio_init(GPIO_t *gpio,unsigned int chip_num,unsigned int pin,GPIO_DIRECTION
             gpiod_chip_close(gpio->chip);
             return -1;
         }
-    }
-        
+    }  
     else if (direction == GPIO_DIR_INPUT)
     {
         if(gpiod_line_settings_set_direction(settings,GPIOD_LINE_DIRECTION_INPUT) < 0)
@@ -55,6 +54,21 @@ int gpio_init(GPIO_t *gpio,unsigned int chip_num,unsigned int pin,GPIO_DIRECTION
             return -1;  
         }
     }
+
+    /// Step 3.5 Pull-up,Pull-down or Pull-disable
+    switch(bias)
+    {
+        case GPIO_BIAS_PULL_UP:
+            gpiod_line_settings_set_bias(settings, GPIOD_LINE_BIAS_PULL_UP);
+            break;
+        case GPIO_BIAS_PULL_DOWN:
+            gpiod_line_settings_set_bias(settings, GPIOD_LINE_BIAS_PULL_DOWN);
+            break;
+        default:
+            gpiod_line_settings_set_bias(settings, GPIOD_LINE_BIAS_PULL_UP);
+            break;
+    }
+
     /// Step 4 create line_config
     struct gpiod_line_config *line_cfg = gpiod_line_config_new();
     if(!line_cfg)
