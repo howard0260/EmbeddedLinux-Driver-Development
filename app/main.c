@@ -52,7 +52,7 @@ int main()
            btnstate == PRESSED ? "PRESSED" : "RELEASED",
            led_status_read(&led) == ON ? "ON" : "OFF");
         // wait for 100ms
-        usleep(100000);
+        sleep(1);
     }
 
     // clear after end

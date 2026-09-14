@@ -112,6 +112,7 @@ int gpio_init(GPIO_t *gpio,unsigned int chip_num,unsigned int pin,GPIO_BIAS bias
         gpiod_chip_close(gpio->chip);
         return -1;
     }
+    printf("GPIO request success!\n");
     /// Step 9 Release config files that no longer needed
     gpiod_line_settings_free(settings);
     gpiod_line_config_free(line_cfg);

@@ -21,7 +21,8 @@ int button_init(BUTTON_t *button,unsigned int pin)
 BUTTON_Status button_status_read(BUTTON_t *button)
 {
     int val = gpio_read(&button->gpio);
-    button->state = (val == GPIO_HIGH) ? PRESSED:RELEASED;
+    printf("gpio_read = %d\n", val);
+    button->state = (val == GPIO_LOW) ? PRESSED:RELEASED;
     return button->state;
 }
 
